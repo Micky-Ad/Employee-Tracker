@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     // MySQL username,
     user: "root",
     // TODO: Add MySQL password here
-    password: "2222",
+    password: "",
     database: "employee_tracker_db",
   },
   console.log(`Connected to the employee_tracker database.`)
@@ -59,17 +59,6 @@ function menu() {
   });
 }
 
-function viewAllEmployees() {
-  var sql = "SELECT * FROM employee ";
-  db.query(sql, (err, res) => {
-    if (err) {
-      console.log(err);
-    } else {
-      console.table(res);
-    }
-  });
-}
-
 function addDepartment() {
   var question = [
     {
@@ -91,7 +80,22 @@ function addDepartment() {
   });
 }
 
-function addRole() {
+async function addRole() {
+  var departmentList = await getDepartmentList();
+  var departments = [];
+  departmentList.forEach((department) => {
+    departments.push(department.name);
+  });
+
+  var question2 = [
+    {
+      type: "list",
+      name: "department",
+      message: " Please select the department for this role ",
+      choices: departments,
+    },
+  ];
+
   var question = [
     {
       type: "input",
@@ -103,24 +107,27 @@ function addRole() {
       name: "salary",
       message: "enter the role's salary ",
     },
-    {
-      type: "input",
-      name: "department",
-      message: "enter the role's Department Id",
-    },
   ];
   inquirer.prompt(question).then((answer) => {
-    console.log(answer);
-    var title = answer.title;
-    var salary = answer.salary;
-    var department = answer.department;
-    var sql = "INSERT INTO role(title,salary,department_id) VALUES (?,?,?)";
-    db.query(sql, [title, salary, department], (err, res) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Role Added to Database");
-      }
+    inquirer.prompt(question2).then((answers2) => {
+      var title = answer.title;
+      var salary = answer.salary;
+      var department = answers2.department;
+      var departmentId = null;
+      departmentList.forEach((deprt) => {
+        if (deprt.name == department) {
+          departmentId = deprt.id;
+        }
+      });
+      var sql = "INSERT INTO role(title,salary,department_id) VALUES (?,?,?)";
+      console.log(title, salary, department, departmentId);
+      db.query(sql, [title, salary, departmentId], (err, res) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("Role Added to Database");
+        }
+      });
     });
   });
 }
@@ -148,7 +155,38 @@ function veiwAllRoles() {
   });
 }
 
-function addEmployee() {
+async function addEmployee() {
+  var roleList = await getRoleList();
+  var roles = [];
+  roleList.forEach((role) => {
+    roles.push(role.title);
+  });
+
+  var question2 = [
+    {
+      type: "list",
+      name: "role",
+      message: " Please select the role for this employee ",
+      choices: roles,
+    },
+  ];
+
+  // Manager Selection
+  var managerList = await getEmployeeList();
+  var managers = [];
+  managerList.forEach((manager) => {
+    managers.push(manager.first_name + " " + manager.last_name);
+  });
+  managers.push("none");
+  var question3 = [
+    {
+      type: "list",
+      name: "manager",
+      message: " Please select the manager for this employee ",
+      choices: managers,
+    },
+  ];
+
   var question = [
     {
       type: "input",
@@ -160,34 +198,46 @@ function addEmployee() {
       name: "last_name",
       message: "enter the last name of employee ",
     },
-    {
-      type: "input",
-      name: "role_id",
-      message: "enter the role id of the employee",
-    },
-    {
-      type: "input",
-      name: "manager_id",
-      message: "enter the manager id for this employee",
-    },
   ];
+
+  // let answer = await inquirer(question);
+  // let answer2 = await inquirer(question2);
+  // let answer3 = await inquirer(question3)
+
   inquirer.prompt(question).then((answer) => {
-    console.log(answer);
-    var first_name = answer.first_name;
-    var last_name = answer.last_name;
-    var role_id = answer.role_id;
-    var manager_id = answer.manager_id;
-    if (manager_id == "null" || manager_id == "") {
-      manager_id = null;
-    }
-    var sql =
-      "INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)";
-    db.query(sql, [first_name, last_name, role_id, manager_id], (err, res) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Employee added to Database");
-      }
+    inquirer.prompt(question2).then((answer2) => {
+      inquirer.prompt(question3).then((answer3) => {
+        var managerName = answer3.manager;
+        var managerId = null;
+        managerList.forEach((mng) => {
+          if (mng.first_name + " " + mng.last_name == managerName) {
+            managerId = mng.id;
+          }
+        });
+        var first_name = answer.first_name;
+        var last_name = answer.last_name;
+        var role = answer2.role;
+        var roleId = null;
+        roleList.forEach((rl) => {
+          if (rl.title == role) {
+            roleId = rl.id;
+          }
+        });
+
+        var sql =
+          "INSERT INTO employee(first_name,last_name,role_id,manager_id) VALUES (?,?,?,?)";
+        db.query(
+          sql,
+          [first_name, last_name, roleId, managerId],
+          (err, res) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log("Employee added to Database");
+            }
+          }
+        );
+      });
     });
   });
 }
@@ -239,10 +289,39 @@ async function updateEmployee() {
   });
 }
 
+function viewAllEmployees() {
+  var sql =
+    "SELECT employee.id,employee.first_name,employee.last_name,role.title,department.name AS Department,role.salary,manager.first_name AS manager FROM employee LEFT JOIN role ON employee.role_id=role.id LEFT JOIN department ON role.department_id=department.id LEFT JOIN employee AS manager ON manager.id=employee.manager_id";
+  db.query(sql, (err, res) => {
+    if (err) {
+      console.log(err);
+    } else {
+      console.table(res);
+    }
+  });
+}
 //  Waiting for the query to excute and return the results
 async function getEmployeeList() {
   return new Promise(function (resolve, reject) {
     var sql = "SELECT * FROM employee ";
+    db.query(sql, (err, res) => {
+      resolve(res);
+    });
+  });
+}
+
+async function getDepartmentList() {
+  return new Promise(function (resolve, reject) {
+    var sql = "SELECT * FROM department ";
+    db.query(sql, (err, res) => {
+      resolve(res);
+    });
+  });
+}
+
+async function getRoleList() {
+  return new Promise(function (resolve, reject) {
+    var sql = "SELECT * FROM role ";
     db.query(sql, (err, res) => {
       resolve(res);
     });
