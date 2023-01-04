@@ -22,8 +22,8 @@ A command-line application from scratch to manage a company's employee database,
 
 # Links
 -----------------------------------------------------------------------
-### [Demonstration Video]()
-### [Repository]()
+### [Demonstration Video](https://youtu.be/j9wPerrACYw)
+### [Repository](https://github.com/Micky-Ad/Employee-Tracker)
 
 
 # Screenshot:
