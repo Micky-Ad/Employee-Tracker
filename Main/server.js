@@ -12,7 +12,7 @@ const db = mysql.createConnection(
     // MySQL username,
     user: "root",
     // TODO: Add MySQL password here
-    password: "",
+    password: "2222",
     database: "employee_tracker_db",
   },
   console.log(`Connected to the employee_tracker database.`)
@@ -199,10 +199,6 @@ async function addEmployee() {
       message: "enter the last name of employee ",
     },
   ];
-
-  // let answer = await inquirer(question);
-  // let answer2 = await inquirer(question2);
-  // let answer3 = await inquirer(question3)
 
   inquirer.prompt(question).then((answer) => {
     inquirer.prompt(question2).then((answer2) => {
