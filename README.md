@@ -37,7 +37,7 @@ A command-line application from scratch to manage a company's employee database,
 # Screenshot:
 ----------------------------------------------------------------------
 
- ![App Schema Design](Main/Assets/Database_Schema Design_Image.PNG)
+ ![App Schema Design](/Assets/Database_Schema Design_Image.PNG)
 
 # Usage:
 ----------------------------------------------------------------------
