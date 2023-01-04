@@ -11,7 +11,7 @@ const db = mysql.createConnection(
     host: "localhost",
     // MySQL username,
     user: "root",
-    // TODO: Add MySQL password here
+    // Add MySQL password here
     password: "",
     database: "employee_tracker_db",
   },
@@ -21,7 +21,7 @@ const db = mysql.createConnection(
 function runApp() {
   menu();
 }
-
+// Promts for user selection at the begining off app
 function menu() {
   var questions = [
     {
@@ -39,6 +39,7 @@ function menu() {
       ],
     },
   ];
+  // User selection and calling the related functions below
   inquirer.prompt(questions).then((answers) => {
     var choice = answers.menu;
     if (choice == "View all employees") {
@@ -171,7 +172,7 @@ async function addEmployee() {
     },
   ];
 
-  // Manager Selection
+  // Manager Selection from pre-existing data from getEmployee list
   var managerList = await getEmployeeList();
   var managers = [];
   managerList.forEach((manager) => {
@@ -200,7 +201,9 @@ async function addEmployee() {
     },
   ];
 
+  //  Prompt for first and last name
   inquirer.prompt(question).then((answer) => {
+    // prompt
     inquirer.prompt(question2).then((answer2) => {
       inquirer.prompt(question3).then((answer3) => {
         var managerName = answer3.manager;
