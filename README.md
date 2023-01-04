@@ -20,6 +20,14 @@ A command-line application from scratch to manage a company's employee database,
 
 -	When user choose to update an employee role, they are prompted to select an employee to update, and their new role and this information is updated in the database.
 
+
+# Built with
+-----------------------------------------------------------------------
+ - Node.js, 
+- Inquirer
+- MySQL
+
+
 # Links
 -----------------------------------------------------------------------
 ### [Demonstration Video](https://youtu.be/j9wPerrACYw)
@@ -35,11 +43,7 @@ A command-line application from scratch to manage a company's employee database,
 ----------------------------------------------------------------------
 Company employee’s database tracker and manager
 
-# Built with
------------------------------------------------------------------------
- - Node.js, 
-- Inquirer
-- MySQL
+
 
 # License:
 -----------------------------------------------------------------------
