@@ -23,7 +23,7 @@ A command-line application from scratch to manage a company's employee database,
 
 # Built with
 -----------------------------------------------------------------------
- - Node.js, 
+ - Node.js
 - Inquirer
 - MySQL
 
