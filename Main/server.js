@@ -203,7 +203,6 @@ async function addEmployee() {
 
   //  Prompt for first and last name
   inquirer.prompt(question).then((answer) => {
-    // prompt
     inquirer.prompt(question2).then((answer2) => {
       inquirer.prompt(question3).then((answer3) => {
         var managerName = answer3.manager;
